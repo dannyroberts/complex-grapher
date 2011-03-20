@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+        <script src="./complex.js"></script>
+        <script src="./complex_grammar.js"></script>
+        <script>
+            $(function(){
+                var f0 = "z**2";
+                var x0 = "2";
+                var y0 = "0";
+                var f = null;
+                var z = null;
+                function refresh_f() {
+                    try {
+                        f = expression.parse($("#f").val());
+                        $("#f").removeClass("parseError");
+                    } catch(err) {
+                        $("#f").addClass("parseError");
+                    }
+                }
+                function refresh_z() {
+                    var _z = new Complex(
+                        parseFloat($("#x").val(), 10),
+                        parseFloat($("#y").val(), 10)
+                    );    
+                    if(!Complex.isNaN(_z)) {
+                        z = _z;
+                        $(this).removeClass("parseError");
+                    } else {
+                        $(this).addClass("parseError");
+                    }
+                }
+                $("#f").change(refresh_f);
+                $("#x, #y").change(refresh_z);
+                $("#f, #x, #y").change(function(){
+                    $("#output").val(f(z));
+                });
+                (function init() {
+                    $("#f").val(f0);
+                    $("#x").val(x0);
+                    $("#y").val(y0);
+                    refresh_f();
+                    refresh_z();                 
+                    $("#f, #x, #y").trigger('change')
+                        .keyup(function(){$(this).trigger('change')});
+                    
+                })();
+            });
+        </script>
+        <style>
+            body {
+                font-family: "Monaco", courier;
+            }
+            input {
+                font: inherit;
+                border: 1px solid #AAA;    
+                background-color: #FFF;
+            }
+            input.parseError {
+                background-color: #FEE;
+            }
+            #x, #y {
+                width: 60px;
+            }
+            #f {
+                width: 400px;
+            }
+            #output {
+                width: 400px;
+            }
+        </style>
+    </head>
+    <body>
+        <p>f(z) = <input type="text" id="f"/></p>
+        
+        <p>f(<input type="text" id="x"> + <input type="text" id="y">i) = <input type="text" disabled="true" id="output" /></p>
+    </body>
+</html>
