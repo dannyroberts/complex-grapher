@@ -21,6 +21,28 @@ Complex = (function() {
             c1.x * c2.y + c1.y * c2.x
         );
     };
+    Complex.divide = function(c1, c2) {
+        var d = c2.x*c2.x - c2.y*c2.y;
+        return new Complex(
+            (c1.x*c2.x + c1.y*c2.y)/d,
+            (c2.x*c1.y - c1.x*c2.y)/d
+        );
+    };
+    Complex.conj = function(c) {
+        return new Complex(c.x, -c.y);
+    };
+    Complex.negative = function(c) {
+        return new Complex(-c.x, -c.y);
+    };
+    Complex.re = function(c) {
+        return new Complex(c.x, 0);
+    };
+    Complex.im = function(c) {
+        return new Complex(c.y, 0);
+    };
+    Complex.abs = function(c) {
+        return new Complex(Math.sqrt(c.x*c.x + c.y*c.y), 0);
+    };
     Complex.pow = function(c1, c2) {
         if(Math.floor(c2.x) == c2.x && c2.y == 0) {
             var result = new Complex(1, 0);
@@ -42,5 +64,7 @@ Complex = (function() {
         return isNaN(c.x) || isNaN(c.y);
     }
     Complex.i = new Complex(0, 1);
+    Complex.pi = new Complex(Math.pi, 0);
+    Complex.e = new Complex(Math.exp(1), 0);
     return Complex;
 })();

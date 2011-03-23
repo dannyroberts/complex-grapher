@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+        <script src="./complex.js"></script>
+        <script src="./matrix.js"></script>
+        <script src="./graph.js"></script>
+        <script src="./complex_grammar.js"></script>
+        <script>
+            $(function(){
+                var f0 = "z**2";
+                var x0 = "2";
+                var y0 = "0";
+                var f = null;
+                var z = null;
+                var ctx = (function(){
+                    var ctx = document.getElementById("graph").getContext('2d');
+                    
+                    ctx.canvas.width = 500;
+                    ctx.canvas.height = 500;
+                    return ctx;
+                })();
+                var config = {
+                    range: {
+                        x: {start: -1, end: 1},
+                        y: {start: -1, end: 1}
+                    },
+                    center: {x: 0, y: 0},
+                    step: .1,
+                    scale: 2,
+                    ctx: ctx,
+                };
+                var graph = null;
+
+                function refresh_f() {
+                    try {
+                        f = expression.parse($("#f").val());
+                        $("#f").removeClass("parseError");
+                        graph = new Graph(f, config);
+                    } catch(err) {
+                        $("#f").addClass("parseError");
+                    }
+                    
+                }
+                function refresh_graph() {                  
+                    // var width = ctx.canvas.width;
+                    // var height = ctx.canvas.height;
+                    // ctx.strokeStyle = "black";
+                    // ctx.lineWidth = 1;
+                    // ctx.beginPath();
+                    // ctx.moveTo(0, height/2);
+                    // ctx.lineTo(width, height/2);
+                    // ctx.moveTo(width/2, 0);
+                    // ctx.lineTo(width/2, height);
+                    // ctx.stroke();   
+                    graph.draw();
+                }
+                $("#f").change(refresh_f);
+                $("#f").change(refresh_graph);
+                (function init() {
+                    $("#f").val(f0);
+                    refresh_f();
+                    refresh_graph();                
+                    $("#f").trigger('change')
+                        .keyup(function(){$(this).trigger('change');});
+                })();
+            });
+        </script>
+        <style>
+            body {
+                font-family: "Monaco", courier;
+            }
+            input {
+                font: inherit;
+                border: 1px solid #AAA;    
+                background-color: #FFF;
+            }
+            input.parseError {
+                background-color: #FEE;
+            }
+            #x, #y {
+                width: 60px;
+            }
+            #f {
+                width: 400px;
+            }
+            #output {
+                width: 400px;
+            }
+            #graph {
+                border: 1px solid #AAA;
+            }
+            #log {
+                border: 1px solid #AAA;
+            }
+            body {
+                display: table-row;
+            }
+            body > * {
+                display: table-cell;
+                padding: 30px;
+            }
+        </style>
+    </head>
+    <body>
+        <div>
+            <p>f(z) = <input type="text" id="f"/></p>
+            <canvas id="graph"></canvas>  
+        </div>
+        <ul id="log">
+        </ul>
+    </body>
+</html>
