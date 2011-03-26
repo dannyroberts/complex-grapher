@@ -17,7 +17,7 @@ multiplicative
   / exponential
 
 exponential
-  = left:function_call SPACE "**" SPACE right:function_call { return "Complex.pow(" + left + ", " + right + ")"; }
+  = left:function_call SPACE ("**"/"^") SPACE right:function_call { return "Complex.pow(" + left + ", " + right + ")"; }
   / function_call
 
 function_call

@@ -11,18 +11,28 @@
         <script src="./complex_grammar.js"></script>
         <script>
             $(function(){
+                (function style(){
+                    $("#f_help").hide();
+                    $("#show_f_help, #hide_f_help").click(function(e){
+                        e.preventDefault();
+                        $("#f_help").toggle('fast');
+                    });
+                })();
                 var f0 = "z**2";
                 var x0 = "2";
                 var y0 = "0";
                 var f = null;
                 var z = null;
-                var ctx = (function(){
+                var getCtx = (function(){
                     var ctx = document.getElementById("graph").getContext('2d');
-                    
-                    ctx.canvas.width = 500;
-                    ctx.canvas.height = 500;
+                    var width = $(window).width() - $("#configuration").innerWidth() - 30;
+                    var height = $(window).height() - 10;
+                    var size = Math.min(width, height);
+                    ctx.canvas.width = size;
+                    ctx.canvas.height = size;
                     return ctx;
-                })();
+                });
+                var ctx;
                 function getConfig(){
                     var res = 30;
                     var r = $("#range").slider('value');
@@ -47,7 +57,7 @@
                     max: 2*Math.PI,
                     step: 2*Math.PI/256,
                     slide: function(event, ui){
-                        var i = $(this).index();
+                        var i = $(this).attr("data-index");
                         angles[i] = ui.value;
                         graph.setAngles(angles);
                         graph.draw();
@@ -89,6 +99,7 @@
                 $("#f").change(refresh_f);
                 
                 (function init() {
+                    ctx = getCtx();
                     $("#f").val(f0);
                     refresh_f();
                     graph.draw();
@@ -100,6 +111,7 @@
         <style>
             body {
                 font-family: "Monaco", courier;
+                margin: 5px;
             }
             input {
                 font: inherit;
@@ -119,7 +131,8 @@
                 width: 400px;
             }
             #graph {
-                border: 1px solid #AAA;
+                border: 1px dashed #EEE;
+                margin-left: 10px;
             }
             #log {
                 border: 1px solid #AAA;
@@ -127,32 +140,106 @@
             body > * {
                 float: left;
             }
-            #grapher {
-                width: 520px;
-            }
             #angles {
                 width: 400px;
             }
             .slider {
                 margin: 20px;
+                width: 300px;
+            }
+            #f_help {
+                background-color: #FAFAFA;
+                border: 1px solid #EEE;
+            }
+            #f_help td {
+                padding-left: 20px;
+            }
+            #hide_f_help {
+                float: right;
+            }
+            #configuration {
+                background-color: #FCFCFC;
+                border: 1px solid #EEE;
+                width: 550px;
+                padding: 20px;
             }
         </style>
     </head>
     <body>
-        <div id="grapher">
-            <p>f(z) = <input type="text" id="f"/></p>
+        <div id="configuration">
+            <p>f(z) = <input type="text" id="f"/> <a href="#" id="show_f_help">?</a></p>
+            <div id="f_help">
+                <a href="#" id="hide_f_help">hide</a>
+                <table>
+                    <tr>
+                        <td>+</td><td>addition</td>
+                    </tr>
+                    <tr>
+                        <td>-</td><td>subtraction</td>
+                    </tr>
+                    <tr>
+                        <td>*</td><td>multiplication</td>
+                    </tr>
+                    <tr>
+                        <td>/</td><td>division</td>
+                    </tr>
+                    <tr>
+                        <td>^ or **</td><td>exponentiation</td>
+                    </tr>
+                    <!--("exp"/"re"/"im"/"abs"/"conj"/"log")-->
+                    <tr>
+                        <td>exp(z)</td><td>e^z</td>
+                    </tr>
+                    <tr>
+                        <td>re(z)</td><td>real part</td>
+                    </tr>
+                    <tr>
+                        <td>im(z)</td><td>imaginary part</td>
+                    </tr>
+                    <tr>
+                        <td>abs(z)</td><td>magnitude</td>
+                    </tr>
+                    <tr>
+                        <td>conj(z)</td><td>complex conjugate</td>
+                    </tr>
+                    <tr>
+                        <td>log(z)</td><td>natural logarithm</td>
+                    </tr>
+                </table>
+            </div>
             <p>Scale: <div id="scale" class="slider"></div></p>
             <p>Range: <div id="range" class="slider"></div></p>
-            <canvas id="graph"></canvas>
+            <div id="angles">
+                <p>Rotation</p>
+                <table>
+                    <tr>
+                        <td>re(z),im(z)</td>
+                        <td><div class="slider" data-index="0"></div></td>
+                    </tr>
+                    <tr>
+                        <td>re(z),re(f(z))</td>
+                        <td><div class="slider" data-index="1"></div></td>
+                    </tr>
+                    <tr>
+                        <td>re(z),im(f(z))</td>
+                        <td><div class="slider" data-index="2"></div></td>
+                    </tr>
+                    <tr>
+                        <td>im(z),re(f(z))</td>
+                        <td><div class="slider" data-index="3"></div></td>
+                    </tr>
+                    <tr>
+                        <td>im(z),im(f(z))</td>
+                        <td><div class="slider" data-index="4"></div></td>
+                    </tr>
+                    <tr>
+                        <td>re(f(z)),im(f(z))</td>
+                        <td><div class="slider" data-index="5"></div></td>
+                    </tr>
+                </table>
+            </div>
         </div>
-        <div id="angles">
-            <div class="slider"></div>
-            <div class="slider"></div>
-            <div class="slider"></div>
-            <div class="slider"></div>
-            <div class="slider"></div>
-            <div class="slider"></div>
-        </div>
+        <canvas id="graph"></canvas>
         <!--ul id="log">
         </ul-->
     </body>
