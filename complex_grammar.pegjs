@@ -39,6 +39,6 @@ variable
   / cnst:("i"/"pi"/"e") { return "Complex." + cnst; }
 
 function
-  = fn:("exp"/"re"/"im"/"abs"/"conj") { return "Complex." + fn; }
+  = fn:("exp"/"re"/"im"/"abs"/"conj"/"log") { return "Complex." + fn; }
 
 SPACE = " "*

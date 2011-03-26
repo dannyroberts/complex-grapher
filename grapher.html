@@ -22,8 +22,26 @@
                     ctx.canvas.height = 500;
                     return ctx;
                 })();
+                function getConfig(){
+                    var res = 30;
+                    var r = $("#range").slider('value');
+                    var scale = $("#scale").slider('value');
+                    var step = 2*r/res;
+                    
+                    return {
+                        range: {
+                            x: {start: -r, end: r},
+                            y: {start: -r, end: r}
+                        },
+                        center: {x: 0, y: 0},
+                        step: step,
+                        scale: scale,
+                        ctx: ctx
+                    }
+                };
+                var graph = null;
                 var angles = [0,0,0,0,0,0];
-                $(".slider").slider({
+                $("#angles .slider").slider({
                     min: 0,
                     max: 2*Math.PI,
                     step: 2*Math.PI/256,
@@ -34,34 +52,41 @@
                         graph.draw();
                     }
                 });
-                
-                
-                var config = {
-                    range: {
-                        x: {start: -1, end: 1},
-                        y: {start: -1, end: 1}
-                    },
-                    center: {x: 0, y: 0},
-                    step: .05,
-                    scale: 2.5,
-                    ctx: ctx,
-                };
-                var graph = null;
+                $("#scale").slider({
+                    min: 1,
+                    max: 20,
+                    step: .1,
+                    value: 2,
+                });
+                $("#range").slider({
+                    min: 1,
+                    max: 5,
+                    step: 0.1
+                });
+                $("#range, #scale").slider({
+                    slide:function(event, ui){
+                        $(this).slider('value', ui.value);
+                        recalculateGraph();
+                    }
+                });
+                function recalculateGraph(){
+                    graph = new Graph(f, getConfig());
+                    graph.setAngles(angles);
+                    graph.draw();
+                }
 
                 function refresh_f() {
                     try {
                         f = expression.parse($("#f").val());
                         $("#f").removeClass("parseError");
-                        graph = new Graph(f, config);
+                        recalculateGraph();
                     } catch(err) {
                         $("#f").addClass("parseError");
                     }
                     
                 }
                 $("#f").change(refresh_f);
-                $("#f").change(function(){
-                    graph.draw();
-                });
+                
                 (function init() {
                     $("#f").val(f0);
                     refresh_f();
@@ -104,10 +129,10 @@
             #grapher {
                 width: 520px;
             }
-            #sliders {
+            #angles {
                 width: 400px;
             }
-            #sliders .slider {
+            .slider {
                 margin: 20px;
             }
         </style>
@@ -115,10 +140,11 @@
     <body>
         <div id="grapher">
             <p>f(z) = <input type="text" id="f"/></p>
-            <!--p>Scale: <input type="text" id="scale"/></p-->
+            <p>Scale: <div id="scale" class="slider"></div></p>
+            <p>Range: <div id="range" class="slider"></div></p>
             <canvas id="graph"></canvas>
         </div>
-        <div id="sliders">
+        <div id="angles">
             <div class="slider"></div>
             <div class="slider"></div>
             <div class="slider"></div>

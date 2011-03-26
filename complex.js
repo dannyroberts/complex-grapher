@@ -60,6 +60,14 @@ Complex = (function() {
             ex * Math.sin(c.y)
         );
     }
+    Complex.log = function(c) {
+        var r = Math.sqrt(c.x*c.x + c.y*c.y);
+        var th = Math.atan2(c.y, c.x);
+        return new Complex(
+            Math.log(r),
+            th
+        );
+    }
     Complex.isNaN = function(c) {
         return isNaN(c.x) || isNaN(c.y);
     }

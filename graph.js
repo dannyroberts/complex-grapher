@@ -3,6 +3,8 @@ var Graph = (function(){
         this.points = [];
         this.backbone = [];
         this.config = c;
+        
+        
         for(var x=c.range.x.start; x<=c.range.x.end; x+=c.step) {
             var _points = [];
             for(var y=c.range.y.start; y<=c.range.y.end; y+=c.step) {
