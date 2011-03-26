@@ -17,16 +17,39 @@ var Graph = (function(){
             var w = f(z);
             this.backbone.push([z.x, z.y, w.x, w.y]);
         }
-        this.R = Matrix.rotation(0, 3, Math.PI/7);
+        //this.R = Matrix.rotation(0, 3, Math.PI/7);
+        this.setAngles([0,0,0,0,0,0]);
     }
-    
+    Graph.rotations = [];
+    for(var i=0; i<3; i++) {
+        for(var j=i+1; j<4; j++) {
+            Graph.rotations.push((function(i,j){
+                return (function(theta) {
+                    return Matrix.rotation(i, j, theta);
+                });
+            })(i,j));
+        }
+    }
+    if(Graph.rotations.length != 6) {
+        alert("Error: Graph.rotations.length != 6");
+    }
+        
     Graph.prototype = {
+        setAngles: function(angles){
+            this.R = Matrix.identity();
+            this.log(Graph.rotations);
+            for(var i in Graph.rotations) {
+                var rot = Graph.rotations[i](angles[i]);
+                this.log(rot.data);
+                this.R = Matrix.multiply(this.R, rot);
+            }
+        },
         draw: function(){
             var c = this.config;          
             var width = c.ctx.canvas.width;
             var height = c.ctx.canvas.height; 
             c.ctx.clearRect(0,0,width,height);
-            this.clearLog();
+            //this.clearLog();
             
             var canvas_points = [];
             var canvas_backbone = [];
@@ -74,7 +97,7 @@ var Graph = (function(){
             }));
             
             {
-                this.config.ctx.strokeStyle = "rgba(0,0,0,1)";
+                this.config.ctx.strokeStyle = "rgba(0,0,255,1)";
                 this.config.ctx.lineWidth = 1;
                 this.canvas('beginPath');
                 this.canvas('moveTo', canvas_backbone[0]);
