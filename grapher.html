@@ -98,14 +98,14 @@
                 }
                 $("#f").change(refresh_f);
                 
-                (function init() {
+                $(window).resize(function() {
                     ctx = getCtx();
                     $("#f").val(f0);
                     refresh_f();
                     graph.draw();
                     $("#f").trigger('change')
                         .keyup(function(){$(this).trigger('change');});
-                })();
+                }).trigger('resize');
             });
         </script>
         <style>
