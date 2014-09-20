@@ -1,1 +1,1 @@
-pegjs expression complex_grammar.pegjs
+pegjs -e expression complex_grammar.pegjs
